@@ -76,7 +76,8 @@ function render_header(array $o = []): void
 <div class="cursor__ring" aria-hidden="true"></div>
 
 <?php if (!$hero && setting('announcement') !== ''): ?>
-<div class="announce"><?= e(setting('announcement')) ?></div>
+<?php $announceItems = array_values(array_filter(array_map('trim', explode('·', setting('announcement'))))); ?>
+<div class="announce"><?php foreach ($announceItems as $ai => $item): ?><?= $ai > 0 ? '<span class="announce__sep">·</span>' : '' ?><span class="announce__item"><?= e($item) ?></span><?php endforeach; ?></div>
 <?php endif; ?>
 
 <header class="site-header" id="site-header">

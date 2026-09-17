@@ -134,7 +134,8 @@ function admin_footer(): void
 <script>
 (function () {
   var side = document.getElementById('admin-side'), t = document.getElementById('admin-nav-toggle');
-  if (t) t.addEventListener('click', function () { side.classList.toggle('is-open'); });
+  if (t) t.addEventListener('click', function (e) { e.stopPropagation(); side.classList.toggle('is-open'); });
+  document.addEventListener('click', function (e) { if (side.classList.contains('is-open') && !side.contains(e.target)) side.classList.remove('is-open'); });
   document.addEventListener('click', function (e) {
     var f = e.target.closest('form[data-confirm]');
     if (f && e.target.closest('button[type="submit"]') && !confirm(f.dataset.confirm)) e.preventDefault();
