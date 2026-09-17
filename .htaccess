@@ -1,0 +1,43 @@
+# Commodities Good Steward: Apache configuration
+Options -Indexes
+AddDefaultCharset UTF-8
+
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+</IfModule>
+
+# Pretty URLs. These only take effect for links once "Pretty URLs" is switched
+# on in Admin > Settings > Email and site; until then the .php links are used.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^product/([A-Za-z0-9\-]+)/?$ product.php?slug=$1 [L,QSA]
+    RewriteRule ^order/([A-Za-z0-9\-]+)/?$ order.php?ref=$1 [L,QSA]
+    RewriteRule ^(shop|cart|checkout|about|contact|faq)/?$ $1.php [L,QSA]
+    RewriteRule ^sitemap\.xml$ sitemap.php [L]
+    # Anything else that does not exist gets the branded 404 page
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . 404.php [L]
+</IfModule>
+
+# Keep the source files private
+<FilesMatch "\.(sqlite|log|md|json|lock)$">
+    Require all denied
+</FilesMatch>
+<FilesMatch "^(seed|config|config\.local|db|functions|layout|svg|admin)\.php$">
+    Require all denied
+</FilesMatch>
