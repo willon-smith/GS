@@ -1,0 +1,11 @@
+.git
+.gitignore
+.dockerignore
+data/*
+!data/.htaccess
+uploads/*
+!uploads/.htaccess
+includes/config.local.php
+render.yaml
+.vscode
+.idea

@@ -1,0 +1,29 @@
+# Render Blueprint: one click deploy of the Commodities Good Steward store.
+# https://render.com/deploy?repo=https://github.com/willon-smith/GS/tree/CGS
+#
+# The free instance type sleeps after 15 minutes without visitors (the first
+# visit after that takes up to a minute) and its disk is wiped on every restart
+# or deploy, so the database re-seeds itself from includes/seed.php and the
+# environment variables below. That is fine for showing the site; for a real
+# store move to a paid instance and attach a persistent disk mounted at
+# /var/www/html/data (and one at /var/www/html/uploads).
+services:
+  - type: web
+    name: cgs-good-steward
+    runtime: docker
+    plan: free
+    region: frankfurt
+    branch: CGS
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health.php
+    autoDeployTrigger: commit
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: ADMIN_DEFAULT_USER
+        value: admin
+      - key: ADMIN_DEFAULT_PASSWORD
+        sync: false          # you are asked for this when you deploy; it becomes the admin login
+      - key: CGS_PRETTY_URLS
+        value: "1"           # /product/stewards-reserve-250g instead of product.php?slug=...

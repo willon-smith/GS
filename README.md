@@ -4,6 +4,23 @@ E-commerce website for a single origin coffee roastery: one coffee, three bag si
 
 Built with PHP 8 and SQLite, plain CSS and vanilla JavaScript. No framework, no build step, no external libraries, and no image files to maintain: the logo, the coffee bags, the beans and the icons are all drawn in SVG from the product data. Upload a product photo in the admin and it replaces the drawn bag.
 
+## Put it online in one click
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/willon-smith/GS/tree/CGS)
+
+GitHub only stores the code; the site needs a server that runs PHP. Render's free tier does that straight from this branch:
+
+1. Sign in at [render.com](https://render.com) with your GitHub account.
+2. Click the button above. Render reads `render.yaml` from the `CGS` branch and shows one web service.
+3. It asks for one value, `ADMIN_DEFAULT_PASSWORD`. Type the password you want for the admin panel.
+4. Click **Apply**. The first build takes about five minutes. Your site is then at `https://cgs-good-steward.onrender.com` (or a close variant if that name is taken; the dashboard shows the exact URL), with the admin at `/admin/`.
+
+Every push to the `CGS` branch redeploys automatically.
+
+What the free tier means: the service sleeps after 15 minutes without visitors and the first visit afterwards takes up to a minute to wake it; and its disk is wiped on every restart or deploy, so orders, uploaded photos and admin edits do not survive a restart (the database re-seeds itself from `includes/seed.php`, so the site always comes back complete). That is fine for showing the site around. For a real store, switch the service to a paid instance and attach persistent disks at `/var/www/html/data` and `/var/www/html/uploads`; nothing in the code changes.
+
+The same `Dockerfile` runs anywhere Docker does: `docker build -t cgs . && docker run -p 8080:80 cgs`, then open `http://localhost:8080/`.
+
 ## Run it locally
 
 Requirements: PHP 8.1 or newer with `pdo_sqlite`, `gd` and `fileinfo` (WAMP, XAMPP, Laragon and the stock PHP installer all have these).
@@ -89,10 +106,24 @@ Everything below is placeholder and is edited in the admin, not in code:
 
 Links are `product.php?slug=...` by default, which works everywhere. Under Apache with `mod_rewrite`, switch on Pretty URLs in Settings to get `/product/stewards-reserve-250g`, `/shop`, `/checkout` and so on; the rules are already in `.htaccess`.
 
-## Going live
+## Configuration by environment variable
+
+Any host can set these instead of editing files (Render's `render.yaml` already does):
+
+| Variable | Purpose | Default |
+|----------|---------|---------|
+| `APP_ENV` | `production` hides PHP errors from visitors | `development` |
+| `ADMIN_DEFAULT_USER` / `ADMIN_DEFAULT_PASSWORD` | the admin login seeded into a fresh database | `admin` / `stewardship` |
+| `CGS_PRETTY_URLS` | `1` seeds the site with pretty URLs switched on (needs Apache `mod_rewrite`) | off |
+| `DB_PATH`, `UPLOAD_DIR` | move the database or the photo folder | `data/cgs.sqlite`, `uploads/` |
+| `PORT` | port Apache listens on inside the Docker image | `80` |
+
+`includes/config.local.php` (ignored by git) can define the same constants for hosts without environment variables.
+
+## Going live on your own server
 
 1. Change the admin password.
-2. Set `APP_ENV` to `production` in `includes/config.local.php` (copy the constants you want to override from `config.php`).
+2. Set `APP_ENV=production` (environment variable or `includes/config.local.php`).
 3. Make sure `data/` and `uploads/` are writable by the web server and not served directly (the `.htaccess` files handle this under Apache).
-4. Serve over HTTPS; the session cookie is marked secure automatically.
+4. Serve over HTTPS; the session cookie is marked secure automatically, and `X-Forwarded-Proto` from a proxy is honoured.
 5. Fill in the real PayFast credentials and turn sandbox off.

@@ -61,7 +61,7 @@ $SEED_SETTINGS = [
     'mail_from'            => 'orders@goodsteward.co.za',
 
     // Site behaviour
-    'pretty_urls'          => '0',
+    'pretty_urls'          => getenv('CGS_PRETTY_URLS') === '1' ? '1' : '0',
     'currency_symbol'      => 'R',
     'about_story'          => "Commodities Good Steward started with a simple question: what would coffee look like if every hand it passed through treated it as something worth looking after?\n\nWe buy one exceptional lot at a time, directly from the washing station, and we pay a price the farmer can plan a season around. We roast it in small batches in Bloemfontein, on a Thursday, and it is at your door within days. Nothing sits in a warehouse. Nothing is blended to hide a bad harvest.\n\nThree bag sizes, one standard. That is the whole range, and we intend to keep it that way until we find another lot that deserves a place beside it.",
 ];
