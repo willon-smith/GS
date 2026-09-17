@@ -1,0 +1,17 @@
+# Runtime data (database, logs) and uploaded photos stay on the server
+data/*
+!data/.htaccess
+!data/.gitkeep
+uploads/*
+!uploads/.htaccess
+!uploads/.gitkeep
+
+# Local overrides
+includes/config.local.php
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
